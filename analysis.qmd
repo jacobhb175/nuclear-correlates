@@ -1,0 +1,126 @@
+---
+title: "analysis"
+format: html
+execute: 
+  echo: FALSE
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(dplyr)
+library(primer.data)
+library(brms)
+library(tidybayes)
+library(gtsummary)
+```
+
+```{r}
+#| label: data
+
+DYMID<-read.csv("dyadic_mid_4.02.csv")
+
+
+DYMID$year <- as.integer(DYMID$year)
+DYMID$strtyr <- as.integer(DYMID$strtyr)
+DYMID_N <- DYMID %>% mutate(modern=case_when((strtyr<1945)~0,(strtyr>=1945)~1))
+DYMID_N <- DYMID_N %>% mutate(nucleara = case_when(
+  (strtyr<1945) ~ -1,
+  (
+    ((namea=="USA") & (strtyr >= 1945)) |
+    ((namea=="RUS") & (strtyr >= 1949)) |
+    ((namea=="UKG") & (strtyr >= 1952)) |
+    ((namea=="FRN") & (strtyr >= 1960)) |
+    ((namea=="CHN") & (strtyr >= 1964)) |
+    ((namea=="ISR") & (strtyr >= 1966)) |
+    ((namea=="IND") & (strtyr >= 1974)) |
+    ((namea=="PAK") & (strtyr >= 1998)) |
+    ((namea=="PRK") & (strtyr >= 2006)) 
+    ) ~ 1,
+  stateb > 450 ~ 0),
+  nuclearb = case_when(
+  (strtyr<1945) ~ -1,
+  (
+    ((nameb=="USA") & (strtyr >= 1945)) |
+    ((nameb=="RUS") & (strtyr >= 1949)) |
+    ((nameb=="UKG") & (strtyr >= 1952)) |
+    ((nameb=="FRN") & (strtyr >= 1960)) |
+    ((nameb=="CHN") & (strtyr >= 1964)) |
+    ((nameb=="ISR") & (strtyr >= 1966)) |
+    ((nameb=="IND") & (strtyr >= 1974)) |
+    ((nameb=="PAK") & (strtyr >= 1998)) |
+    ((nameb=="PRK") & (strtyr >= 2006))
+    ) ~ 1,
+  strtyr  >= 1945 ~ 0) 
+  ) %>%
+  select(nucleara,nuclearb,strtyr,namea,nameb,everything()) %>%
+  arrange(desc(nucleara))
+
+DYMID_N <- DYMID_N %>% mutate(greata = case_when(
+    ((namea=="AUH") & (strtyr <= 1918)) |
+    ((namea=="CHN") & (strtyr >= 1896)) |
+    ((namea=="UKG") & (strtyr >= 1952)) |
+    (namea=="FRN") |
+    (namea=="GMY") |
+    (namea=="ITA") |
+    (namea=="RUS") |
+    (namea=="UKG") |
+    (namea=="USA") ~ TRUE,
+    TRUE ~ FALSE
+  ),
+  greatb = case_when(
+    ((nameb=="AUH") & (strtyr <= 1918)) |
+    ((nameb=="CHN") & (strtyr >= 1896)) |
+    ((nameb=="UKG") & (strtyr >= 1952)) |
+    (nameb=="FRN") |
+    (nameb=="GMY") |
+    (nameb=="ITA") |
+    (nameb=="RUS") |
+    (nameb=="UKG") |
+    (nameb=="USA") ~ TRUE,
+    TRUE ~ FALSE
+  ),
+)
+
+DYMID_N <- DYMID_N |> drop_na() %>% mutate(nuclear=nucleara+nuclearb) %>%
+  select(nuclear,everything()) %>%
+  arrange(desc(nuclear))
+
+DYMID_N <- DYMID_N |> drop_na() %>% mutate(great=greata+greatb) %>%
+  select(great,everything()) %>%
+  arrange(desc(great))
+
+DYMID_N <- (DYMID_N |> drop_na())
+
+DYMID_N <- DYMID_N |> select(great, nuclear, strtyr,outcome,settlmnt,fatlev,highact,hihost,cumdurat)
+
+set.seed(9)
+
+nuclear_data <- DYMID_N  |> 
+  drop_na() |>
+  slice_sample(prop=0.1)
+
+```
+We are using data from a postcard mailers study from the 2006 primary election in Michigan to attempt to forecast the causal effect of postcard mailers on voter participation in the Texas gubernatorial general election. One problem which may cast doubt on our approach is the difference in electorate between Michigan and Texas. We are using a linear model with error terms on the dependent variable of whether someone has voted. Our model predicts a positive relationship between age and likelihood to vote. One QoI is the correlation between receiving a postcard about neighbors and voting, which has a correlation of 8.4%, with a confidence interval between 4.1% and 12.5%. 
+
+```{r}
+#| label: model
+#| cache: true
+
+fit_nuclear<-brm(formula = hihost ~ strtyr + cumdurat + great + nuclear, data = nuclear_data, family = continuum(), refresh = 0, silent = 2, seed = 19)
+```
+
+
+$$y_{i} = \beta_{0} + \beta_{1} age\_z + \beta_{2}male_i + \beta_{3}civic\_duty_i + \\ \beta_{4}hawthorne_i + \beta_{5}self_i + \beta_{6}neighbors_i + \\ \beta_{7}Sometimes\ vote_i + \beta_{8}Always\ vote_i + \\ \beta_{9}civic\_duty_i Sometimes\ vote_i + \beta_{10}hawthorne_i Sometimes\ vote_i + \\ \beta_{11}self_i Sometimes\ vote_i + \beta_{11}neighbors_i Sometimes\ vote_i + \\ \beta_{12}civic\_duty_i Always\ vote_i + \beta_{13}hawthorne_i Always\ vote_i + \\ \beta_{14}self_i Always\ vote_i + \beta_{15}neighbors_i Always\ vote_i + \epsilon_{i}$$
+
+```{r}
+#| label: plot
+posterior_interval(fit_nuclear)
+fixef(fit_nuclear)
+pp_check(fit_nuclear)
+```
+
+```{r}
+fit_nuclear |>
+tbl_regression(intercept=TRUE,estimate_fun = function(x) style_sigfig(x, digits = 3))
+```
