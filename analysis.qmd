@@ -107,7 +107,7 @@ We are using data from a postcard mailers study from the 2006 primary election i
 #| label: model
 #| cache: true
 
-fit_nuclear<-brm(formula = hihost ~ strtyr + cumdurat + great + nuclear, data = nuclear_data, family = continuum(), refresh = 0, silent = 2, seed = 19)
+fit_nuclear<-brm(formula = hihost ~ strtyr + cumdurat + great + nuclear, data = nuclear_data, family = gaussian(), refresh = 0, silent = 2, seed = 19)
 ```
 
 
