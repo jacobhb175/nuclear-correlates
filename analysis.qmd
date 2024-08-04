@@ -7,12 +7,14 @@ execute:
 
 ```{r}
 #| label: setup
+#| message: false
 library(tidyverse)
 library(dplyr)
 library(primer.data)
 library(brms)
 library(tidybayes)
 library(gtsummary)
+library(ggthemes)
 ```
 
 ```{r}
@@ -25,7 +27,7 @@ DYMID$year <- as.integer(DYMID$year)
 DYMID$strtyr <- as.integer(DYMID$strtyr)
 DYMID_N <- DYMID %>% mutate(modern=case_when((strtyr<1945)~0,(strtyr>=1945)~1))
 DYMID_N <- DYMID_N %>% mutate(nucleara = case_when(
-  (strtyr<1945) ~ -1,
+  (strtyr<1945) ~ 0,
   (
     ((namea=="USA") & (strtyr >= 1945)) |
     ((namea=="RUS") & (strtyr >= 1949)) |
@@ -39,7 +41,7 @@ DYMID_N <- DYMID_N %>% mutate(nucleara = case_when(
     ) ~ 1,
   stateb > 450 ~ 0),
   nuclearb = case_when(
-  (strtyr<1945) ~ -1,
+  (strtyr<1945) ~ 0,
   (
     ((nameb=="USA") & (strtyr >= 1945)) |
     ((nameb=="RUS") & (strtyr >= 1949)) |
@@ -90,15 +92,26 @@ DYMID_N <- DYMID_N |> drop_na() %>% mutate(great=greata+greatb) %>%
   select(great,everything()) %>%
   arrange(desc(great))
 
-DYMID_N <- (DYMID_N |> drop_na())
 
-DYMID_N <- DYMID_N |> select(great, nuclear, strtyr,outcome,settlmnt,fatlev,highact,hihost,cumdurat)
+DYMID_N <- DYMID_N |> mutate(modern=case_when(
+  (strtyr<=1945)~FALSE,
+  (strtyr>1945)~TRUE,
+  TRUE ~ NA))
+
+DYMID_N <- DYMID_N |>
+mutate(escalated=case_when(
+  (hihost<=3)~FALSE,
+  (hihost>3)~TRUE,
+  TRUE ~ NA))
+
+DYMID_N <- (DYMID_N |> drop_na())
+DYMID_N <- DYMID_N |> select(great, nuclear,strtyr,modern,outcome,hihost,escalated,settlmnt,fatlev,highact,cumdurat)
+
 
 set.seed(9)
 
 nuclear_data <- DYMID_N  |> 
-  drop_na() |>
-  slice_sample(prop=0.1)
+  drop_na() 
 
 ```
 We are using data from a postcard mailers study from the 2006 primary election in Michigan to attempt to forecast the causal effect of postcard mailers on voter participation in the Texas gubernatorial general election. One problem which may cast doubt on our approach is the difference in electorate between Michigan and Texas. We are using a linear model with error terms on the dependent variable of whether someone has voted. Our model predicts a positive relationship between age and likelihood to vote. One QoI is the correlation between receiving a postcard about neighbors and voting, which has a correlation of 8.4%, with a confidence interval between 4.1% and 12.5%. 
@@ -106,10 +119,10 @@ We are using data from a postcard mailers study from the 2006 primary election i
 ```{r}
 #| label: model
 #| cache: true
+#| warning: false
 
-fit_nuclear<-brm(formula = hihost ~ strtyr + cumdurat + great + nuclear, data = nuclear_data, family = gaussian(), refresh = 0, silent = 2, seed = 19)
+fit_nuclear<-brm(formula = hihost ~ modern + great + nuclear, data = nuclear_data, family = gaussian(), refresh = 0, silent = 2, seed = 19)
 ```
-
 
 $$y_{i} = \beta_{0} + \beta_{1} age\_z + \beta_{2}male_i + \beta_{3}civic\_duty_i + \\ \beta_{4}hawthorne_i + \beta_{5}self_i + \beta_{6}neighbors_i + \\ \beta_{7}Sometimes\ vote_i + \beta_{8}Always\ vote_i + \\ \beta_{9}civic\_duty_i Sometimes\ vote_i + \beta_{10}hawthorne_i Sometimes\ vote_i + \\ \beta_{11}self_i Sometimes\ vote_i + \beta_{11}neighbors_i Sometimes\ vote_i + \\ \beta_{12}civic\_duty_i Always\ vote_i + \beta_{13}hawthorne_i Always\ vote_i + \\ \beta_{14}self_i Always\ vote_i + \beta_{15}neighbors_i Always\ vote_i + \epsilon_{i}$$
 
@@ -118,9 +131,23 @@ $$y_{i} = \beta_{0} + \beta_{1} age\_z + \beta_{2}male_i + \beta_{3}civic\_duty_
 posterior_interval(fit_nuclear)
 fixef(fit_nuclear)
 pp_check(fit_nuclear)
+
+fit_nuclear |>
+tbl_regression()
 ```
+variables: modern, great, nuclear, hihost
+values: T/F, 0-2, 0-2, 0-5
 
 ```{r}
+#| label: plot2
+ndata<-tibble::tibble(expand_grid(modern=c(TRUE,FALSE),great=c(1,2),nuclear=c(1,2)))
+
 fit_nuclear |>
-tbl_regression(intercept=TRUE,estimate_fun = function(x) style_sigfig(x, digits = 3))
+add_epred_draws(newdata=ndata) |> 
+  ggplot(aes(x=.epred,fill=modern,y=great))+stat_slab()+scale_fill_calc()
 ```
+
+
+
+fit_nuclear |> add_epred_draws(newdata=ndata) |> 
+  ggplot(aes(x=.epred,fill=as.factor(great)))+geom_histogram(bins=100)
