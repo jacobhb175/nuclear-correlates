@@ -1,0 +1,6 @@
+---
+title: "Sources"
+author: "Jacob Hardin-Bernhardt"
+format: html
+---
+My data draws on the Militarized Interstate Disputes version 5.0 dataset from the Correlates of War Project (https://correlatesofwar.org/data-sets/mids/). To clean and present the data, I used R and RStudio, ChatGPT, and libraries and functions including tidyverse, scales, and ggplot. To create a model based on the data, I used libraries including tidybayes and gtsummary.
