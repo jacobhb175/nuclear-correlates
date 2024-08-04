@@ -1,0 +1,7 @@
+---
+title: "Model"
+author: "Jacob Hardin-Bernhardt"
+format: html
+---
+$$y_{i} = \beta_{0} + \beta_{1} modern + \beta_{2}great + \beta_{3}nuclear + \epsilon_{i}$$
+We are using a linear model with error terms on the dependent variable of whether armed hostility occurs in a given conflict. Our model predicts negative relationships between nuclear possession, great power status, and modernity with chance of severe escalation.

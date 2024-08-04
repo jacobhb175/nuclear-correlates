@@ -2,25 +2,162 @@
 title: "Index"
 author: "Jacob Hardin-Bernhardt"
 format: html
+execute: 
+  echo: FALSE
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
-1 + 1
+#| label: setup
+#| message: false
+library(tidyverse)
+library(dplyr)
+library(primer.data)
+library(brms)
+library(tidybayes)
+library(gtsummary)
+library(ggthemes)
+library(tibble)
 ```
-
-You can add options to executable code like this 
 
 ```{r}
-#| echo: false
-2 * 2
+#| label: data
+
+DYMID<-read.csv("dyadic_mid_4.02.csv")
+
+
+DYMID$year <- as.integer(DYMID$year)
+DYMID$strtyr <- as.integer(DYMID$strtyr)
+DYMID_N <- DYMID %>% mutate(modern=case_when((strtyr<1945)~0,(strtyr>=1945)~1))
+DYMID_N <- DYMID_N %>% mutate(nucleara = case_when(
+  (strtyr<1945) ~ 0,
+  (
+    ((namea=="USA") & (strtyr >= 1945)) |
+    ((namea=="RUS") & (strtyr >= 1949)) |
+    ((namea=="UKG") & (strtyr >= 1952)) |
+    ((namea=="FRN") & (strtyr >= 1960)) |
+    ((namea=="CHN") & (strtyr >= 1964)) |
+    ((namea=="ISR") & (strtyr >= 1966)) |
+    ((namea=="IND") & (strtyr >= 1974)) |
+    ((namea=="PAK") & (strtyr >= 1998)) |
+    ((namea=="PRK") & (strtyr >= 2006)) 
+    ) ~ 1,
+  stateb > 450 ~ 0),
+  nuclearb = case_when(
+  (strtyr<1945) ~ 0,
+  (
+    ((nameb=="USA") & (strtyr >= 1945)) |
+    ((nameb=="RUS") & (strtyr >= 1949)) |
+    ((nameb=="UKG") & (strtyr >= 1952)) |
+    ((nameb=="FRN") & (strtyr >= 1960)) |
+    ((nameb=="CHN") & (strtyr >= 1964)) |
+    ((nameb=="ISR") & (strtyr >= 1966)) |
+    ((nameb=="IND") & (strtyr >= 1974)) |
+    ((nameb=="PAK") & (strtyr >= 1998)) |
+    ((nameb=="PRK") & (strtyr >= 2006))
+    ) ~ 1,
+  strtyr  >= 1945 ~ 0) 
+  ) %>%
+  select(nucleara,nuclearb,strtyr,namea,nameb,everything()) %>%
+  arrange(desc(nucleara))
+
+DYMID_N <- DYMID_N %>% mutate(greata = case_when(
+    ((namea=="AUH") & (strtyr <= 1918)) |
+    ((namea=="CHN") & (strtyr >= 1896)) |
+    ((namea=="UKG") & (strtyr >= 1952)) |
+    (namea=="FRN") |
+    (namea=="GMY") |
+    (namea=="ITA") |
+    (namea=="RUS") |
+    (namea=="UKG") |
+    (namea=="USA") ~ TRUE,
+    TRUE ~ FALSE
+  ),
+  greatb = case_when(
+    ((nameb=="AUH") & (strtyr <= 1918)) |
+    ((nameb=="CHN") & (strtyr >= 1896)) |
+    ((nameb=="UKG") & (strtyr >= 1952)) |
+    (nameb=="FRN") |
+    (nameb=="GMY") |
+    (nameb=="ITA") |
+    (nameb=="RUS") |
+    (nameb=="UKG") |
+    (nameb=="USA") ~ TRUE,
+    TRUE ~ FALSE
+  ),
+)
+
+DYMID_N <- DYMID_N |> drop_na() %>% mutate(nuclear=nucleara+nuclearb) %>%
+  select(nuclear,everything()) %>%
+  arrange(desc(nuclear))
+
+DYMID_N <- DYMID_N |> drop_na() %>% mutate(great=greata+greatb) %>%
+  select(great,everything()) %>%
+  arrange(desc(great))
+
+
+DYMID_N <- DYMID_N |> mutate(modern=case_when(
+  (strtyr<=1945)~FALSE,
+  (strtyr>1945)~TRUE,
+  TRUE ~ NA))
+
+DYMID_N <- DYMID_N |>
+mutate(escalated=case_when(
+  (hihost<=3)~FALSE,
+  (hihost>3)~TRUE,
+  TRUE ~ NA))
+
+DYMID_N <- (DYMID_N |> drop_na())
+DYMID_N <- DYMID_N |> select(great, nuclear,strtyr,modern,outcome,hihost,escalated,settlmnt,fatlev,highact,cumdurat)
+
+DYMID_N <- DYMID_N |> mutate(great=as.factor(great))
+DYMID_N <- DYMID_N |> mutate(nuclear=as.factor(nuclear))
+
+set.seed(9)
+
+nuclear_data <- DYMID_N  |> 
+  drop_na() 
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+#| label: model
+#| cache: true
+
+fit_nuclear<-brm(formula = escalated ~ modern+great+nuclear, data = nuclear_data, family = bernoulli(), refresh = 0, silent = 2, seed = 19)
+```
+
+```{r}
+#| label: plot
+#| message: false
+
+#posterior_interval(fit_nuclear)
+#fixef(fit_nuclear)
+#pp_check(fit_nuclear)
+
+#fit_nuclear |>
+#tbl_regression()
+
+ndata <- tibble(expand_grid(modern = c(TRUE,FALSE), great = c(0, 1, 2), nuclear = c(0, 1, 2)))
+
+
+fit_nuclear |>
+  add_epred_draws(newdata = ndata) |>
+  ggplot(aes(x = .epred, fill = as.factor(great),y=as.factor(nuclear))) +
+  stat_slab(alpha=0.8) +
+  scale_fill_calc() +
+  labs(fill = "Great") +
+  scale_x_continuous(labels=scales::percent_format())
+
+
+fit_nuclear |>
+  add_epred_draws(newdata = ndata) |>
+  ggplot(aes(x = .epred, fill = as.factor(nuclear),y=as.factor(great))) +
+  stat_slab(alpha=0.8) +
+  scale_fill_calc() +
+  labs(fill = "Nuclear")
+```
+
+
+We are using data from the academic Correlates of War Study on Militarized Interstate Disputes over the period from 1816 to 2014. With this data, we hope to determine the predictive effect of nuclear proliferation on peace as opposed to other factors. 
