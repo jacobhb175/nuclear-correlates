@@ -114,7 +114,9 @@ nuclear_data <- DYMID_N  |>
   drop_na() 
 
 ```
+
 We are using data from a postcard mailers study from the 2006 primary election in Michigan to attempt to forecast the causal effect of postcard mailers on voter participation in the Texas gubernatorial general election. One problem which may cast doubt on our approach is the difference in electorate between Michigan and Texas. We are using a linear model with error terms on the dependent variable of whether someone has voted. Our model predicts a positive relationship between age and likelihood to vote. One QoI is the correlation between receiving a postcard about neighbors and voting, which has a correlation of 8.4%, with a confidence interval between 4.1% and 12.5%. 
+
 
 ```{r}
 #| label: model
@@ -123,7 +125,9 @@ We are using data from a postcard mailers study from the 2006 primary election i
 fit_nuclear<-brm(formula = hihost ~ modern + great + nuclear, data = nuclear_data, family = gaussian(), refresh = 0, silent = 2, seed = 19)
 ```
 
+
 $$y_{i} = \beta_{0} + \beta_{1} modern + \beta_{2}great + \beta_{3}nuclear + \epsilon_{i}$$
+
 
 ```{r}
 #| label: plot
@@ -134,6 +138,7 @@ pp_check(fit_nuclear)
 fit_nuclear |>
 tbl_regression()
 ```
+
 variables: modern, great, nuclear, hihost
 values: T/F, 0-2, 0-2, 0-5
 
@@ -141,3 +146,4 @@ values: T/F, 0-2, 0-2, 0-5
 
 fit_nuclear |> add_epred_draws(newdata=ndata) |> 
   ggplot(aes(x=.epred,fill=as.factor(great)))+geom_histogram(bins=100)
+

@@ -633,15 +633,6 @@ nuclear    -0.2132996 0.02002061 -0.25164980 -0.173595265</code></pre>
 </div>
 </div>
 <p>variables: modern, great, nuclear, hihost values: T/F, 0-2, 0-2, 0-5</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_files/figure-html/plot2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 <p>fit_nuclear |&gt; add_epred_draws(newdata=ndata) |&gt; ggplot(aes(x=.epred,fill=as.factor(great)))+geom_histogram(bins=100)</p>
 
 </main>
