@@ -142,16 +142,17 @@ ndata <- tibble(expand_grid(modern = c(TRUE,FALSE), great = c(0, 1, 2), nuclear 
 
 fit_nuclear |>
   add_epred_draws(newdata = ndata) |>
-  ggplot(aes(x = .epred, fill = as.factor(great),y=as.factor(modern))) +
-  stat_slab() +
+  ggplot(aes(x = .epred, fill = as.factor(great),y=as.factor(nuclear))) +
+  stat_slab(alpha=0.8) +
   scale_fill_calc() +
-  labs(fill = "Great")
+  labs(fill = "Great") +
+  scale_x_continuous(labels=scales::percent_format())
 
 
 fit_nuclear |>
   add_epred_draws(newdata = ndata) |>
-  ggplot(aes(x = .epred, fill = as.factor(nuclear),y=as.factor(modern))) +
-  stat_slab() +
+  ggplot(aes(x = .epred, fill = as.factor(nuclear),y=as.factor(great))) +
+  stat_slab(alpha=0.8) +
   scale_fill_calc() +
   labs(fill = "Nuclear")
 ```
