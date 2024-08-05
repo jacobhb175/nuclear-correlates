@@ -6,5 +6,6 @@
 *_files
 *_cache
 *.html
+*_site
 
 /.quarto/
