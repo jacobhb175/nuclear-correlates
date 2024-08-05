@@ -132,12 +132,12 @@ fit_nuclear<-brm(formula = escalated ~ modern+great+nuclear, data = nuclear_data
 #| label: plot
 #| message: false
 
-posterior_interval(fit_nuclear)
-fixef(fit_nuclear)
-pp_check(fit_nuclear)
+#posterior_interval(fit_nuclear)
+#fixef(fit_nuclear)
+#pp_check(fit_nuclear)
 
-fit_nuclear |>
-tbl_regression()
+#fit_nuclear |>
+#tbl_regression()
 
 ndata <- tibble(expand_grid(modern = c(TRUE,FALSE), great = c(0, 1, 2), nuclear = c(0, 1, 2)))
 
