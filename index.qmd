@@ -182,15 +182,15 @@ combined_data <- fit_nuclear |>
   add_epred_draws(newdata = ndata) |>
   pivot_longer(cols = c(great, nuclear), names_to = "category", values_to = "value")
 
-plot4 <- combined_data |>
+plot5 <- combined_data |>
   ggplot(aes(x = .epred, y = category, fill = as.factor(value))) +
   stat_slab(alpha=0.8) +
   scale_fill_calc() +
   scale_x_continuous(labels=scales::percent_format()) +
   scale_y_discrete(labels=c("Great","Nuclear")) +
-  labs(y="Category",x="Predicted Chance of High Escalation",fill="Involved Powers")
+  labs(y="Category",x="Predicted Chance of High Escalation",fill="Involved Powers",title="Effects of Nuclear Proliferation on Peace",caption="Correlates of War Project",subtitle="The difference between nuclear and great power proliferation is negligible")
 
-plot4
+plot5
 ```
 
 The chance of major escalation in a conflict varies depending on the involvement of great or nuclear powers. Using data from all militarized disputes between two states in the world between 1816 and 2014, we seek to measure the deterrent effect of nuclear powers as opposed to great powers. We modeled escalated, a binary TRUE/FALSE variable measuring whether a conflict escalated to involve the use of force by one or more state against another, as a linear function of great power involvement, nuclear power involvement, and whether or not the conflict takes place in the modern era. Conflicts involving more great powers, conflicts involving more nuclear powers, and conflicts in the modern era were all less likely to be escalated. The effects of nuclear proliferation as opposed to those of great power involvement on peace are negligible.
