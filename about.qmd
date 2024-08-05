@@ -6,10 +6,9 @@ format: html
 
 About this site:
 
-I am a sophomore majoring in International Relations at New York University. You can contact me or view my work at https://github.com/jacobhb175 or jhb487@nyu.edu
 
-This project, which is hosted on GitHub at https://github.com/jacobhb175/nuclear-correlates, attempts to evaluate the influence of nuclear proliferation on restraint in interstate conflicts through analysis of data from the Correlates of War Project.
+I am a sophomore majoring in International Relations at New York University. You can contact me or view my work at https://github.com/jacobhb175 or jacob.hardin.bernhardt@nyu.edu
 
-This project,  is a visual representation of the data in the Correlates of War Project.
+This project, which is hosted on [GitHub](https://github.com/jacobhb175/nuclear-correlates), attempts to evaluate the influence of nuclear proliferation on restraint in interstate conflicts through analysis of data from the Correlates of War Project.
 
-This project was created as a part of Kane’s Data Science Bootcamp. https://bootcamp.davidkane.info/
+This project was created as a part of [Kane’s Data Science Bootcamp](https://bootcamp.davidkane.info/).

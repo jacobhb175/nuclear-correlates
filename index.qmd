@@ -6,7 +6,6 @@ execute:
   echo: FALSE
 ---
 
-
 ```{r}
 #| label: setup
 #| message: false
@@ -18,6 +17,7 @@ library(tidybayes)
 library(gtsummary)
 library(ggthemes)
 library(tibble)
+#library(plotly)
 ```
 
 ```{r}
@@ -194,3 +194,4 @@ plot4
 ```
 
 The chance of major escalation in a conflict varies depending on the involvement of great or nuclear powers. Using data from all militarized disputes between two states in the world between 1816 and 2014, we seek to measure the deterrent effect of nuclear powers as opposed to great powers. We modeled escalated, a binary TRUE/FALSE variable measuring whether a conflict escalated to involve the use of force by one or more state against another, as a linear function of great power involvement, nuclear power involvement, and whether or not the conflict takes place in the modern era. Conflicts involving more great powers, conflicts involving more nuclear powers, and conflicts in the modern era were all less likely to be escalated. The effects of nuclear proliferation as opposed to those of great power involvement on peace are negligible.
+
