@@ -140,10 +140,9 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>About this site:</p>
-<p>I am a sophomore majoring in International Relations at New York University. You can contact me or view my work at https://github.com/jacobhb175 or jhb487@nyu.edu</p>
-<p>This project, which is hosted on GitHub at https://github.com/jacobhb175/nuclear-correlates, attempts to evaluate the influence of nuclear proliferation on restraint in interstate conflicts through analysis of data from the Correlates of War Project.</p>
-<p>This project, is a visual representation of the data in the Correlates of War Project.</p>
-<p>This project was created as a part of Kane’s Data Science Bootcamp. https://bootcamp.davidkane.info/</p>
+<p>I am a sophomore majoring in International Relations at New York University. You can contact me or view my work at https://github.com/jacobhb175 or jacob.hardin.bernhardt@nyu.edu</p>
+<p>This project, which is hosted on <a href="https://github.com/jacobhb175/nuclear-correlates">GitHub</a>, attempts to evaluate the influence of nuclear proliferation on restraint in interstate conflicts through analysis of data from the Correlates of War Project.</p>
+<p>This project was created as a part of <a href="https://bootcamp.davidkane.info/">Kane’s Data Science Bootcamp</a>.</p>
 
 
 
@@ -229,7 +228,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/jacobhb175\.github\.io\/nuclear-correlates\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

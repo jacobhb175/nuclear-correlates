@@ -14,24 +14,31 @@
     "text": "My data draws on the Militarized Interstate Disputes version 5.0 dataset from the Correlates of War Project (https://correlatesofwar.org/data-sets/mids/). To clean and present the data, I used R and RStudio, ChatGPT, and libraries and functions including tidyverse, scales, and ggplot. To create a model based on the data, I used libraries including tidybayes and gtsummary."
   },
   {
+    "objectID": "models.html",
+    "href": "models.html",
+    "title": "Model",
+    "section": "",
+    "text": "\\[y_{i} = \\beta_{0} + \\beta_{1} modern + \\beta_{2}great + \\beta_{3}nuclear + \\epsilon_{i}\\] We are using a linear model with error terms on the dependent variable of whether armed hostility occurs in a given conflict. Our model predicts negative relationships between nuclear possession, great power status, and modernity with chance of severe escalation."
+  },
+  {
     "objectID": "model.html",
     "href": "model.html",
     "title": "Model",
     "section": "",
-    "text": "\\[y_{i} = \\beta_{0} + \\beta_{1} modern + \\beta_{2}great + \\beta_{3}nuclear + \\epsilon_{i}\\] We are using a linear model with error terms on the dependent variable of whether armed hostility occurs in a given conflict. Our model predicts negative relationships between nuclear possession, great power status, and modernity with chance of severe escalation."
+    "text": "\\[y_{i} = \\beta_{0} + \\beta_{1} modern + \\beta_{2}great + \\beta_{3}nuclear + \\epsilon_{i}\\]\nWe are using a linear model with error terms on the dependent variable of whether armed hostility occurs in a given conflict. Our model predicts negative relationships between nuclear possession, great power status, and modernity with chance of severe escalation.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\nBeta\n95% CI\n1\n\n\n\n\nmodern\n\n\n\n\n\n\n    FALSE\n—\n—\n\n\n    TRUE\n-0.24\n-0.38, -0.09\n\n\ngreat\n\n\n\n\n\n\n    0\n—\n—\n\n\n    1\n-0.36\n-0.49, -0.23\n\n\n    2\n-0.56\n-0.75, -0.36\n\n\nnuclear\n\n\n\n\n\n\n    0\n—\n—\n\n\n    1\n-0.54\n-0.70, -0.38\n\n\n    2\n-0.61\n-0.89, -0.33\n\n\n\n1\nCI = Credible Interval"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Index",
     "section": "",
-    "text": "2.5%         97.5%\nb_Intercept      1.3886966  1.646795e+00\nb_modernTRUE    -0.3828273 -9.312464e-02\nb_great1        -0.4898510 -2.287626e-01\nb_great2        -0.7539732 -3.638306e-01\nb_nuclear1      -0.6991928 -3.825021e-01\nb_nuclear2      -0.8873846 -3.333767e-01\nIntercept        1.0091768  1.107684e+00\nlprior          -2.0439517 -2.022965e+00\nlp__         -4743.0602691 -4.736447e+03\n\n\n             Estimate  Est.Error       Q2.5       Q97.5\nIntercept   1.5185714 0.06540971  1.3886966  1.64679532\nmodernTRUE -0.2387861 0.07470931 -0.3828273 -0.09312464\ngreat1     -0.3577133 0.06717166 -0.4898510 -0.22876261\ngreat2     -0.5585886 0.09860757 -0.7539732 -0.36383064\nnuclear1   -0.5394185 0.08019960 -0.6991928 -0.38250215\nnuclear2   -0.6117869 0.14183249 -0.8873846 -0.33337666\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCharacteristic\nBeta\n95% CI\n1\n\n\n\n\nmodern\n\n\n\n\n\n\n    FALSE\n—\n—\n\n\n    TRUE\n-0.24\n-0.38, -0.09\n\n\ngreat\n\n\n\n\n\n\n    0\n—\n—\n\n\n    1\n-0.36\n-0.49, -0.23\n\n\n    2\n-0.56\n-0.75, -0.36\n\n\nnuclear\n\n\n\n\n\n\n    0\n—\n—\n\n\n    1\n-0.54\n-0.70, -0.38\n\n\n    2\n-0.61\n-0.89, -0.33\n\n\n\n1\nCI = Credible Interval\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe chance of major escalation in a conflict varies depending on the involvement of great or nuclear powers. Using data from all militarized disputes between two states in the world between 1816 and 2014, we seek to measure the deterrent effect of nuclear powers as opposed to great powers. We modeled escalated, a binary TRUE/FALSE variable measuring whether a conflict escalated to involve the use of force by one or more state against another, as a linear function of great power involvement, nuclear power involvement, and whether or not the conflict takes place in the modern era. Conflicts involving more great powers, conflicts involving more nuclear powers, and conflicts in the modern era were all less likely to be escalated. The effects of nuclear proliferation as opposed to those of great power involvement on peace are negligible."
+    "text": "The chance of major escalation in a conflict varies depending on the involvement of great or nuclear powers. Using data from all militarized disputes between two states in the world between 1816 and 2014, we seek to measure the deterrent effect of nuclear powers as opposed to great powers. We modeled escalated, a binary TRUE/FALSE variable measuring whether a conflict escalated to involve the use of force by one or more state against another, as a linear function of great power involvement, nuclear power involvement, and whether or not the conflict takes place in the modern era. Conflicts involving more great powers, conflicts involving more nuclear powers, and conflicts in the modern era were all less likely to be escalated. The effects of nuclear proliferation as opposed to those of great power involvement on peace are negligible."
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site:\nI am a sophomore majoring in International Relations at New York University. You can contact me or view my work at https://github.com/jacobhb175 or jhb487@nyu.edu\nThis project, which is hosted on GitHub at https://github.com/jacobhb175/nuclear-correlates, attempts to evaluate the influence of nuclear proliferation on restraint in interstate conflicts through analysis of data from the Correlates of War Project.\nThis project, is a visual representation of the data in the Correlates of War Project.\nThis project was created as a part of Kane’s Data Science Bootcamp. https://bootcamp.davidkane.info/"
+    "text": "About this site:\nI am a sophomore majoring in International Relations at New York University. You can contact me or view my work at https://github.com/jacobhb175 or jacob.hardin.bernhardt@nyu.edu\nThis project, which is hosted on GitHub, attempts to evaluate the influence of nuclear proliferation on restraint in interstate conflicts through analysis of data from the Correlates of War Project.\nThis project was created as a part of Kane’s Data Science Bootcamp."
   }
 ]
