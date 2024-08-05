@@ -146,8 +146,7 @@ combined_data <- fit_nuclear |>
   add_epred_draws(newdata = ndata) |>
   pivot_longer(cols = c(great, nuclear), names_to = "category", values_to = "value")
 
-full_plot <- combined_data |>
-  ggplot(aes(x = .epred, y = category, fill = as.factor(value))) +
+full_plot <- ggplot(combined_data,aes(x = .epred, y = category, fill = as.factor(value))) +
   stat_slab(alpha=0.8) +
   scale_fill_calc() +
   scale_x_continuous(labels=scales::percent_format()) +
