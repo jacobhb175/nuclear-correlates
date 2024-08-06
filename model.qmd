@@ -1,6 +1,5 @@
 ---
 title: "Model"
-author: "Jacob Hardin-Bernhardt"
 format: html
 execute:
   echo: false
