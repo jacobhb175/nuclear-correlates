@@ -1,6 +1,5 @@
 ---
 title: "Index"
-author: "Jacob Hardin-Bernhardt"
 format: html
 execute: 
   echo: FALSE
